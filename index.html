@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="KasirNusa - aplikasi kasir sederhana untuk UMKM.">
+  <title>KasirNusa — Kasir Digital UMKM</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#dashboard" aria-label="KasirNusa Dashboard">
+        <span class="brand-mark">K</span>
+        <span class="brand-copy"><strong>KasirNusa</strong><small>Kasir Digital UMKM</small></span>
+      </a>
+
+      <div class="sidebar-label">MENU UTAMA</div>
+      <nav class="main-nav" aria-label="Navigasi utama">
+        <button class="nav-item active" data-page="dashboard"><span class="nav-icon">▦</span>Dashboard</button>
+        <button class="nav-item" data-page="cashier"><span class="nav-icon">▣</span>Kasir</button>
+        <button class="nav-item" data-page="products"><span class="nav-icon">▤</span>Produk</button>
+        <button class="nav-item" data-page="categories"><span class="nav-icon">▧</span>Kategori</button>
+        <button class="nav-item" data-page="transactions"><span class="nav-icon">↔</span>Riwayat Transaksi</button>
+        <button class="nav-item" data-page="reports"><span class="nav-icon">▥</span>Laporan</button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="sidebar-help">
+          <span class="help-icon">?</span>
+          <div><strong>Butuh bantuan?</strong><small>Kelola usaha lebih mudah.</small></div>
+        </div>
+        <div class="profile-mini">
+          <div class="avatar">A</div>
+          <div class="profile-copy"><strong>Administrator</strong><small>Admin toko</small></div>
+          <span class="profile-dots">•••</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu" id="mobile-menu" aria-label="Buka menu">☰</button>
+          <div><p class="eyebrow">MANAJEMEN TOKO</p><h1 id="page-title">Dashboard</h1></div>
+        </div>
+        <div class="topbar-right">
+          <span class="today-label" id="today-label"></span>
+          <div class="top-avatar">A</div>
+        </div>
+      </header>
+
+      <div class="page-container">
+        <!-- DASHBOARD -->
+        <section class="page active" id="page-dashboard">
+          <div class="welcome-row">
+            <div><h2>Selamat datang di KasirNusa! 👋</h2><p>Pantau aktivitas dan performa tokomu hari ini.</p></div>
+            <button class="btn btn-primary" data-go="cashier"><span>＋</span> Transaksi Baru</button>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card"><div class="stat-top"><span class="stat-icon blue">▣</span><span class="stat-caption">Total Penjualan</span></div><strong class="stat-value" id="stat-sales">Rp0</strong><small class="stat-note">Akumulasi seluruh transaksi</small></article>
+            <article class="stat-card"><div class="stat-top"><span class="stat-icon green">↗</span><span class="stat-caption">Keuntungan</span></div><strong class="stat-value" id="stat-profit">Rp0</strong><small class="stat-note">Perkiraan laba dari penjualan</small></article>
+            <article class="stat-card"><div class="stat-top"><span class="stat-icon purple">▤</span><span class="stat-caption">Jumlah Produk</span></div><strong class="stat-value" id="stat-products">0</strong><small class="stat-note">Jenis produk terdaftar</small></article>
+            <article class="stat-card"><div class="stat-top"><span class="stat-icon orange">▧</span><span class="stat-caption">Transaksi</span></div><strong class="stat-value" id="stat-transactions">0</strong><small class="stat-note">Transaksi tersimpan</small></article>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="panel recent-panel">
+              <div class="panel-heading"><div><h3>Transaksi Terbaru</h3><p>Aktivitas penjualan terakhir</p></div><button class="text-button" data-go="transactions">Lihat semua →</button></div>
+              <div class="table-wrap"><table><thead><tr><th>ID TRANSAKSI</th><th>WAKTU</th><th>TOTAL</th><th>STATUS</th></tr></thead><tbody id="recent-transactions"></tbody></table></div>
+              <div class="empty-state hidden" id="recent-empty"><span>▤</span><strong>Belum ada transaksi</strong><small>Transaksi yang selesai akan muncul di sini.</small></div>
+            </article>
+            <article class="panel stock-panel">
+              <div class="panel-heading"><div><h3>Stok Menipis</h3><p>Produk dengan stok 5 atau kurang</p></div><span class="tiny-badge">Perlu dicek</span></div>
+              <div id="low-stock-list" class="low-stock-list"></div>
+              <div class="empty-state compact hidden" id="stock-empty"><span>✓</span><strong>Stok aman</strong><small>Tidak ada produk yang hampir habis.</small></div>
+            </article>
+          </div>
+          <div class="info-strip"><span class="info-symbol">i</span><div><strong>Catatan penggunaan</strong><p>KasirNusa menyimpan data pada browser ini menggunakan LocalStorage. Gunakan browser dan perangkat yang sama agar data tetap tersedia.</p></div></div>
+        </section>
+
+        <!-- KASIR -->
+        <section class="page" id="page-cashier">
+          <div class="section-intro"><div><h2>Kasir</h2><p>Pilih produk, masukkan jumlah, lalu selesaikan pembayaran.</p></div><span class="soft-label">Penjualan</span></div>
+          <div class="cashier-layout">
+            <div class="panel catalog-panel">
+              <div class="catalog-toolbar">
+                <label class="search-box"><span>⌕</span><input type="search" id="cashier-search" placeholder="Cari nama produk..."></label>
+                <select id="cashier-category" class="select-control" aria-label="Filter kategori"><option value="all">Semua kategori</option></select>
+              </div>
+              <div class="product-grid" id="cashier-products"></div>
+              <div class="empty-state hidden" id="cashier-empty"><span>⌕</span><strong>Produk tidak ditemukan</strong><small>Coba kata kunci atau kategori lain.</small></div>
+            </div>
+            <aside class="panel cart-panel">
+              <div class="cart-heading"><div><h3>Keranjang</h3><p id="cart-count">0 produk dipilih</p></div><button class="text-button danger-text" id="clear-cart">Kosongkan</button></div>
+              <div class="cart-items" id="cart-items"><div class="cart-empty"><span>🛒</span><strong>Keranjang masih kosong</strong><small>Pilih produk untuk memulai transaksi.</small></div></div>
+              <div class="cart-summary">
+                <div class="summary-line"><span>Subtotal</span><strong id="cart-subtotal">Rp0</strong></div>
+                <div class="summary-line total-line"><span>Total pembayaran</span><strong id="cart-total">Rp0</strong></div>
+                <label class="field-label" for="payment-amount">Uang diterima</label>
+                <input class="input-control payment-input" type="number" id="payment-amount" min="0" step="500" placeholder="Masukkan nominal pembayaran">
+                <div class="summary-line change-line"><span>Kembalian</span><strong id="payment-change">Rp0</strong></div>
+                <button class="btn btn-primary btn-full" id="checkout-button" disabled>Selesaikan Transaksi</button>
+                <small class="form-hint">Stok akan otomatis berkurang setelah transaksi berhasil.</small>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <!-- PRODUK -->
+        <section class="page" id="page-products">
+          <div class="section-intro"><div><h2>Data Produk</h2><p>Kelola nama, kategori, harga, dan stok barang.</p></div><button class="btn btn-primary" id="add-product-button"><span>＋</span> Tambah Produk</button></div>
+          <div class="panel table-panel">
+            <div class="table-toolbar"><label class="search-box"><span>⌕</span><input type="search" id="product-search" placeholder="Cari produk..."></label><span class="result-count" id="product-count">0 produk</span></div>
+            <div class="table-wrap"><table><thead><tr><th>PRODUK</th><th>KATEGORI</th><th>HARGA JUAL</th><th>HARGA MODAL</th><th>STOK</th><th>AKSI</th></tr></thead><tbody id="products-table"></tbody></table></div>
+            <div class="empty-state hidden" id="products-empty"><span>▤</span><strong>Belum ada produk</strong><small>Tambahkan produk pertama untuk mulai menggunakan kasir.</small></div>
+          </div>
+        </section>
+
+        <!-- KATEGORI -->
+        <section class="page" id="page-categories">
+          <div class="section-intro"><div><h2>Kategori Produk</h2><p>Kelompokkan barang agar lebih mudah ditemukan.</p></div><button class="btn btn-primary" id="add-category-button"><span>＋</span> Tambah Kategori</button></div>
+          <div class="category-grid" id="category-grid"></div>
+          <div class="info-strip"><span class="info-symbol">∈</span><div><strong>Penerapan Himpunan</strong><p>Setiap kategori merupakan himpunan produk. Pilih kategori untuk melihat anggota produk yang termasuk di dalamnya.</p></div></div>
+        </section>
+
+        <!-- TRANSAKSI -->
+        <section class="page" id="page-transactions">
+          <div class="section-intro"><div><h2>Riwayat Transaksi</h2><p>Daftar transaksi penjualan yang sudah diselesaikan.</p></div><button class="btn btn-outline" id="export-transactions">⇩ Ekspor CSV</button></div>
+          <div class="panel table-panel">
+            <div class="table-toolbar"><label class="search-box"><span>⌕</span><input type="search" id="transaction-search" placeholder="Cari ID transaksi..."></label><span class="result-count" id="transaction-count">0 transaksi</span></div>
+            <div class="table-wrap"><table><thead><tr><th>ID TRANSAKSI</th><th>TANGGAL</th><th>ITEM</th><th>TOTAL</th><th>UNTUNG</th><th>AKSI</th></tr></thead><tbody id="transactions-table"></tbody></table></div>
+            <div class="empty-state hidden" id="transactions-empty"><span>↔</span><strong>Belum ada transaksi</strong><small>Transaksi yang selesai akan tersimpan di halaman ini.</small></div>
+          </div>
+        </section>
+
+        <!-- LAPORAN -->
+        <section class="page" id="page-reports">
+          <div class="section-intro"><div><h2>Laporan Bisnis</h2><p>Ringkasan performa penjualan tokomu.</p></div><button class="btn btn-outline" id="export-report">⇩ Ekspor Laporan</button></div>
+          <div class="stats-grid report-stats">
+            <article class="stat-card"><div class="stat-top"><span class="stat-icon blue">Rp</span><span class="stat-caption">Total Omzet</span></div><strong class="stat-value" id="report-revenue">Rp0</strong><small class="stat-note">Dari seluruh transaksi</small></article>
+            <article class="stat-card"><div class="stat-top"><span class="stat-icon green">↗</span><span class="stat-caption">Total Keuntungan</span></div><strong class="stat-value" id="report-profit">Rp0</strong><small class="stat-note">Omzet dikurangi modal terjual</small></article>
+            <article class="stat-card"><div class="stat-top"><span class="stat-icon purple">▣</span><span class="stat-caption">Barang Terjual</span></div><strong class="stat-value" id="report-items">0</strong><small class="stat-note">Total unit terjual</small></article>
+            <article class="stat-card"><div class="stat-top"><span class="stat-icon orange">▤</span><span class="stat-caption">Rata-rata Transaksi</span></div><strong class="stat-value" id="report-average">Rp0</strong><small class="stat-note">Rata-rata nilai penjualan</small></article>
+          </div>
+          <div class="panel report-panel"><div class="panel-heading"><div><h3>Produk Terlaris</h3><p>Diurutkan berdasarkan jumlah unit terjual</p></div></div><div id="best-sellers" class="best-seller-list"></div><div class="empty-state hidden" id="bestseller-empty"><span>▥</span><strong>Belum ada data penjualan</strong><small>Produk terlaris akan terlihat setelah ada transaksi.</small></div></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-backdrop hidden" id="modal-backdrop">
+    <div class="modal-card" id="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-heading"><div><p class="eyebrow">KASIRNUSA</p><h2 id="modal-title">Form</h2></div><button class="icon-button" id="close-modal" aria-label="Tutup">×</button></div>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
